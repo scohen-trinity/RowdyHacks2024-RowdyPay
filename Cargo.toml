@@ -1,0 +1,10 @@
+[workspace]
+members = [
+    "api",
+    "commands",
+    "controllers",
+    "dtos",
+    "models",
+    "utils",
+]
+resolver = "2"
