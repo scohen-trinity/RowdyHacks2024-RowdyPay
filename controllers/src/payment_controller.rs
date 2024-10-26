@@ -11,7 +11,7 @@ async fn get_payment(Json(payload): Json<GetPaymentCommand>) -> Json<Payment> {
         group_id: 1,
         amt: 10.00,
         date_made: Date::new(22, 10, 2024),
-        // description
+        description: "hookers and blow".to_string(),
     };
 
     Json(payment)
@@ -26,7 +26,7 @@ async fn get_payments(Json(payload): Json<GetPaymentsCommand>) -> Json<Vec<Payme
             group_id: 1,
             amt: 10.00,
             date_made: Date::new(22, 10, 2024),
-            // description
+            description: "Red bull".to_string(),
         },
         Payment {
             pmt_id: 2,
@@ -34,6 +34,7 @@ async fn get_payments(Json(payload): Json<GetPaymentsCommand>) -> Json<Vec<Payme
             group_id: 1,
             amt: 8.00,
             date_made: Date::new(24, 10, 2024),
+            description: "goon sesh".to_string(),
         },
         Payment {
             pmt_id: 3,
@@ -41,6 +42,7 @@ async fn get_payments(Json(payload): Json<GetPaymentsCommand>) -> Json<Vec<Payme
             group_id: 1,
             amt: 15.00,
             date_made: Date::new(26, 10, 2024),
+            description: "hookers and blow".to_string(),
         }
     ];
 
