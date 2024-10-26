@@ -1,5 +1,5 @@
 use axum::{
-    routing::get,
+    routing::post,
     Router,
     Json,
 };
@@ -23,5 +23,5 @@ async fn get_profile(Json(id): Json<GetProfileCommand>) -> Json<Profile> {
 
 pub fn profile_routes() -> Router {
     Router::new()
-        .route("/get_profile", get(get_profile))
+        .route("/get_profile", post(get_profile))
 }
