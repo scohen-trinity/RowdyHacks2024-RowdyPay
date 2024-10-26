@@ -6,6 +6,11 @@ pub struct GetPaymentCommand {
 }
 
 #[derive(Deserialize)]
-pub struct GetPaymentsCommand {
+pub struct GetUserPaymentsCommand {
     pub user_id: u64,
+}
+
+#[derive(Deserialize)]
+pub struct GetGroupPaymentsCommand {
+    pub group_id: u64,
 }
