@@ -6,10 +6,10 @@ use axum::{
 use commands::profile_commands::GetProfileCommand;
 use models::profile_model::Profile;
 
-async fn get_profile(Json(id): Json<GetProfileCommand>) -> Json<Profile> {
+async fn get_profile(Json(payload): Json<GetProfileCommand>) -> Json<Profile> {
     // TODO implement fetch to the database to grab the profile with the id
     let profile: Profile = Profile {
-        id: id.id,
+        id: payload.id,
         display_name: "display_name".to_string(),
         email: "example@gmail.com".to_string(),
         image: "https://memories-matter.blog/wp-content/uploads/2018/08/sillymona.png".to_string(),
