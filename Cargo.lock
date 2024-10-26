@@ -204,6 +204,9 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 [[package]]
 name = "commands"
 version = "0.1.0"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "concurrent-queue"
@@ -314,6 +317,9 @@ checksum = "1aaf95b3e5c8f23aa320147307562d361db0ae0d51242340f558153b4eb2439b"
 [[package]]
 name = "dtos"
 version = "0.1.0"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "either"
@@ -782,6 +788,9 @@ dependencies = [
 [[package]]
 name = "models"
 version = "0.1.0"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "nom"
