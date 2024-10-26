@@ -1,2 +1,3 @@
 pub mod hello_world_controller;
-pub mod profile;
+pub mod profile_controller;
+pub mod payment_controller;

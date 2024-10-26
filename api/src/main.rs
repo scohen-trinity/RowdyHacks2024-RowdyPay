@@ -1,5 +1,5 @@
 use axum::{routing::get, Router};
-use controllers::{hello_world_controller::hello_world_routes, profile::profile_routes};
+use controllers::{hello_world_controller::hello_world_routes, payment_controller::payment_routes, profile_controller::profile_routes};
 use tokio::net::TcpListener;
 use tower_http::cors::{Any, CorsLayer};
 
@@ -22,6 +22,7 @@ async fn main() {
         .route("/", get(root))
         .nest("/api", hello_world_routes())
         .nest("/api", profile_routes())
+        .nest("/api", payment_routes())
         .layer(cors);
 
     // listen globally to port 9000
