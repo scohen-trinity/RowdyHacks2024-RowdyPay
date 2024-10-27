@@ -5,3 +5,4 @@ edition = "2021"
 
 [dependencies]
 serde = "1.0.210"
+sqlx = { version = "0.8", features = ["postgres", "bigdecimal"] }

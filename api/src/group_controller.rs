@@ -1,4 +1,4 @@
-use axum::{routing::post, Json, Router};
+use axum::Json;
 use commands::group_commands::{CreateGroupCommand, GetGroupCommand, GetGroupsCommand};
 use models::{group_model::Group, profile_model::Profile};
 
@@ -71,17 +71,9 @@ pub async fn get_users_by_group(Json(payload): Json<GetGroupCommand>) -> Json<Ve
     Json(group_participants)
 }
 
-async fn create_group(Json(payload): Json<CreateGroupCommand>) -> Json<Group> {
+pub async fn create_group(Json(payload): Json<CreateGroupCommand>) -> Json<Group> {
     // TODO make the backend call to the database to add the group as well as the associated balance
-    let group: Group = Group::new(payload.name, payload.user_ids, payload.image);
+    let group: Group = Group::new(payload.name, payload.user_ids, payload.img.unwrap_or_default());
 
     Json(group)
-}
-
-pub fn group_routes() -> Router {
-    Router::new()
-        .route("/get_group", post(get_group))
-        .route("/get_groups", post(get_groups))
-        .route("/get_users_by_group", post(get_users_by_group))
-        .route("/create_group", post(create_group))
 }

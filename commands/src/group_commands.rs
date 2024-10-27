@@ -13,7 +13,7 @@ pub struct GetGroupsCommand {
 #[derive(Deserialize)]
 pub struct CreateGroupCommand {
     pub name: String,
-    pub image: String,
+    pub img: Option<String>,
     pub user_ids: Vec<i64>,
     pub creator_id: i64,
 }

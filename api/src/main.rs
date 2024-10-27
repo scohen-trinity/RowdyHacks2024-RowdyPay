@@ -2,7 +2,7 @@ use auth_controller::{auth_user, create_user};
 use axum::{routing::{get, post}, Router};
 use balance_controller::{get_balance, update_balances};
 use dotenvy::dotenv;
-use group_controller::{get_group, get_groups, get_users_by_group};
+use group_controller::{create_group, get_group, get_groups, get_users_by_group};
 use payment_controller::{get_group_payments, get_payment, get_user_payments, make_payment};
 use profile_controller::get_user;
 use sqlx::postgres::PgPoolOptions;
@@ -61,6 +61,7 @@ async fn main() {
         .route("/api/make_payment", post(make_payment))
         .route("/api/create_user", post(create_user))
         .route("/api/auth_user", post(auth_user))
+        .route("/api/create_group", post(create_group))
         .with_state(pool)
         .layer(cors);
 
