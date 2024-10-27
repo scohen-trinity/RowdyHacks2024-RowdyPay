@@ -8,13 +8,13 @@ pub struct Profile {
     pub img: String,
     pub groups: Vec<i32>,
     pub payments: Vec<i32>,
-    pub date_created: usize,
+    pub date_created: i32,
 }
 
 impl Profile {
-    pub fn new(display_name: String, email: String, img: String, date_created: usize) -> Profile {
+    pub fn new(user_id: i32, display_name: String, email: String, img: String, date_created: i32) -> Profile {
         Profile {
-            user_id: 1,
+            user_id: user_id,
             display_name,
             email,
             img,

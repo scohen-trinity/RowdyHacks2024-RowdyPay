@@ -1,3 +1,4 @@
+use auth_controller::{auth_user, create_user};
 use axum::{routing::{get, post}, Router};
 use balance_controller::{get_balance, update_balances};
 use dotenvy::dotenv;
@@ -13,6 +14,7 @@ pub mod hello_world_controller;
 pub mod payment_controller;
 pub mod profile_controller;
 pub mod group_controller;
+pub mod auth_controller;
 
 #[tokio::main]
 async fn main() {
@@ -57,6 +59,8 @@ async fn main() {
         .route("/api/get_user_payments", post(get_user_payments))
         .route("/api/get_group_payments", post(get_group_payments))
         .route("/api/make_payment", post(make_payment))
+        .route("/api/create_user", post(create_user))
+        .route("/api/auth_user", post(auth_user))
         .with_state(pool)
         .layer(cors);
 
