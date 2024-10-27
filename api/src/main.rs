@@ -1,11 +1,15 @@
 use axum::{routing::get, Router};
 use controllers::{balance_controller::balance_routes, group_controller::group_routes, hello_world_controller::hello_world_routes, payment_controller::payment_routes, profile_controller::profile_routes};
+use dotenvy::dotenv;
 use sqlx::postgres::PgPoolOptions;
 use tokio::net::TcpListener;
 use tower_http::cors::{Any, CorsLayer};
 
 #[tokio::main]
 async fn main() {
+    // fetching environment variables
+    dotenv().ok();
+
     // create the CORS layer to allow requests
     let cors: CorsLayer = CorsLayer::new()
         .allow_origin(Any)

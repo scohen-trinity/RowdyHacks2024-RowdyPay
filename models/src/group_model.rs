@@ -1,22 +1,20 @@
 use serde::{Deserialize, Serialize};
 
-use crate::profile_model::Profile;
-
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Group {
-    pub id: u64,
-    pub name: String,
-    pub users: Vec<Profile>,
-    pub image: String,
+    pub group_id: i64,
+    pub group_name: String,
+    pub users: Vec<i64>,
+    pub img: String,
 }
 
 impl Group {
-    pub fn new(name: String, users: Vec<Profile>, image: String) -> Group {
+    pub fn new(group_name: String, users: Vec<i64>, img: String) -> Group {
         Group {
-            id: 1,
-            name,
+            group_id: 1,
+            group_name,
             users,
-            image,
+            img,
         }
     }
 }

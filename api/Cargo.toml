@@ -13,3 +13,4 @@ sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres", "macro
 
 # workspace dependencies
 controllers = { path = "../controllers" }
+dotenvy = "0.15.7"

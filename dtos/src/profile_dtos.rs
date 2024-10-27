@@ -2,11 +2,11 @@ use serde::Serialize;
 
 #[derive(Serialize)]
 pub struct GetProfileDTO {
-    pub id: u64,
+    pub id: i64,
     pub display_name: String,
     pub email: String,
     pub image: String,
-    pub groups: Vec<u64>,
-    pub payments: Vec<u64>,
+    pub groups: Vec<i64>,
+    pub payments: Vec<i64>,
     pub date_created: usize,
 }

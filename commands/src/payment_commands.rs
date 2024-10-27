@@ -2,15 +2,15 @@ use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub struct GetPaymentCommand {
-    pub payment_id: u64,
+    pub payment_id: i64,
 }
 
 #[derive(Deserialize)]
 pub struct GetUserPaymentsCommand {
-    pub user_id: u64,
+    pub user_id: i64,
 }
 
 #[derive(Deserialize)]
 pub struct GetGroupPaymentsCommand {
-    pub group_id: u64,
+    pub group_id: i64,
 }
