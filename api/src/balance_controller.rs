@@ -2,7 +2,7 @@ use axum::{routing::post, Json, Router};
 use commands::balance_commands::{GetBalanceCommand, UpdateBalancesCommand};
 use models::balance_model::Balance;
 
-async fn get_balance(Json(payload): Json<GetBalanceCommand>) -> Json<Balance> {
+pub async fn get_balance(Json(payload): Json<GetBalanceCommand>) -> Json<Balance> {
     // TODO make the backend call with join on the users and groups table to get this
     let balance: Balance = Balance {
         balance_id: 1,
@@ -14,7 +14,7 @@ async fn get_balance(Json(payload): Json<GetBalanceCommand>) -> Json<Balance> {
     Json(balance)
 }
 
-async fn update_balances(Json(payload): Json<UpdateBalancesCommand>) -> Json<bool> {
+pub async fn update_balances(Json(payload): Json<UpdateBalancesCommand>) -> Json<bool> {
     let amount: f64 = payload.amt / (payload.user_ids.len() as f64);
     println!("number of users: {}", payload.user_ids.len() as f64);
     for user in payload.user_ids {

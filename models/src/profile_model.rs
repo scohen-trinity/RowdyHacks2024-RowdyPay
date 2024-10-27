@@ -2,12 +2,12 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Profile {
-    pub user_id: i64,
+    pub user_id: i32,
     pub display_name: String,
     pub email: String,
     pub img: String,
-    pub groups: Vec<i64>,
-    pub payments: Vec<i64>,
+    pub groups: Vec<i32>,
+    pub payments: Vec<i32>,
     pub date_created: usize,
 }
 

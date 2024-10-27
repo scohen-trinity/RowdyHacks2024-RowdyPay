@@ -1,9 +1,18 @@
-use axum::{routing::get, Router};
-use controllers::{balance_controller::balance_routes, group_controller::group_routes, hello_world_controller::hello_world_routes, payment_controller::payment_routes, profile_controller::profile_routes};
+use axum::{routing::{get, post}, Router};
+use balance_controller::{get_balance, update_balances};
 use dotenvy::dotenv;
+use group_controller::{get_group, get_groups, get_users_by_group};
+use payment_controller::{get_group_payments, get_payment, get_user_payments, make_payment};
+use profile_controller::get_user;
 use sqlx::postgres::PgPoolOptions;
 use tokio::net::TcpListener;
 use tower_http::cors::{Any, CorsLayer};
+
+pub mod balance_controller;
+pub mod hello_world_controller;
+pub mod payment_controller;
+pub mod profile_controller;
+pub mod group_controller;
 
 #[tokio::main]
 async fn main() {
@@ -37,13 +46,18 @@ async fn main() {
 
     // application routes
     let app: Router = Router::new()
-        .with_state(pool)
         .route("/", get(root))
-        .nest("/api", hello_world_routes())
-        .nest("/api", balance_routes())
-        .nest("/api", group_routes())
-        .nest("/api", payment_routes())
-        .nest("/api", profile_routes())
+        .route("/api/get_user", post(get_user))
+        .route("/api/get_balance", post(get_balance))
+        .route("/api/update_balances", post(update_balances))
+        .route("/api/get_group", post(get_group))
+        .route("/api/get_groups", post(get_groups))
+        .route("/api/get_users_by_group", post(get_users_by_group))
+        .route("/api/get_payment", post(get_payment))
+        .route("/api/get_user_payments", post(get_user_payments))
+        .route("/api/get_group_payments", post(get_group_payments))
+        .route("/api/make_payment", post(make_payment))
+        .with_state(pool)
         .layer(cors);
 
     // listen globally to port 9000

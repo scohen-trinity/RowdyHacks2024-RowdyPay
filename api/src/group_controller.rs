@@ -2,7 +2,7 @@ use axum::{routing::post, Json, Router};
 use commands::group_commands::{CreateGroupCommand, GetGroupCommand, GetGroupsCommand};
 use models::{group_model::Group, profile_model::Profile};
 
-async fn get_group(Json(payload): Json<GetGroupCommand>) -> Json<Group> {
+pub async fn get_group(Json(payload): Json<GetGroupCommand>) -> Json<Group> {
     let group: Group = Group { 
         group_id: payload.group_id,
         group_name: "test group".to_string(),
@@ -14,7 +14,7 @@ async fn get_group(Json(payload): Json<GetGroupCommand>) -> Json<Group> {
 }
 
 // for returning groups associated with a user_id
-async fn get_groups(Json(payload): Json<GetGroupsCommand>) -> Json<Vec<Group>> {
+pub async fn get_groups(Json(payload): Json<GetGroupsCommand>) -> Json<Vec<Group>> {
     // TODO make the fetch call with the payload.id
     println!("Getting the groups from users id: {}", payload.user_id);
     let groups: Vec<Group> = vec![
@@ -35,7 +35,7 @@ async fn get_groups(Json(payload): Json<GetGroupsCommand>) -> Json<Vec<Group>> {
     Json(groups)
 }
 
-async fn get_users_by_group(Json(payload): Json<GetGroupCommand>) -> Json<Vec<Profile>> {
+pub async fn get_users_by_group(Json(payload): Json<GetGroupCommand>) -> Json<Vec<Profile>> {
     // TODO make the database call to fetch the users from a specific group
     println!("Fetching users by group_id: {}", payload.group_id.to_string());
     let group_participants = vec![

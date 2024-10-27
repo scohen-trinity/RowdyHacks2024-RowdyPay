@@ -55,13 +55,17 @@ name = "api"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "commands",
  "controllers",
  "dotenvy",
+ "dtos",
+ "models",
  "serde",
  "serde_json",
  "sqlx",
  "tokio",
  "tower-http",
+ "utils",
 ]
 
 [[package]]

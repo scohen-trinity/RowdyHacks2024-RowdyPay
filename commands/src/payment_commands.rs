@@ -14,3 +14,10 @@ pub struct GetUserPaymentsCommand {
 pub struct GetGroupPaymentsCommand {
     pub group_id: i64,
 }
+
+#[derive(Deserialize)]
+pub struct MakePaymentCommand {
+    pub user_id: i64,
+    pub group_id: i64,
+    pub amt: f64,
+}

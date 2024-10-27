@@ -1,9 +1,9 @@
 use axum::{routing::post, Json, Router};
-use commands::payment_commands::{GetGroupPaymentsCommand, GetPaymentCommand, GetUserPaymentsCommand};
+use commands::payment_commands::{GetGroupPaymentsCommand, GetPaymentCommand, GetUserPaymentsCommand, MakePaymentCommand};
 use models::payment_model::Payment;
 use utils::date_util::Date;
 
-async fn get_payment(Json(payload): Json<GetPaymentCommand>) -> Json<Payment> {
+pub async fn get_payment(Json(payload): Json<GetPaymentCommand>) -> Json<Payment> {
     // TODO implement fetch to the database based on a single payment id
     let payment: Payment = Payment {
         pmt_id: 1,
@@ -17,7 +17,7 @@ async fn get_payment(Json(payload): Json<GetPaymentCommand>) -> Json<Payment> {
     Json(payment)
 }
 
-async fn get_user_payments(Json(payload): Json<GetUserPaymentsCommand>) -> Json<Vec<Payment>> {
+pub async fn get_user_payments(Json(payload): Json<GetUserPaymentsCommand>) -> Json<Vec<Payment>> {
     // TODO implement fetch to the database to grab the profile with the id
     let payments: Vec<Payment> = vec![
         Payment {
@@ -49,7 +49,7 @@ async fn get_user_payments(Json(payload): Json<GetUserPaymentsCommand>) -> Json<
     Json(payments)
 }
 
-async fn get_group_payments(Json(payload): Json<GetGroupPaymentsCommand>) -> Json<Vec<Payment>> {
+pub async fn get_group_payments(Json(payload): Json<GetGroupPaymentsCommand>) -> Json<Vec<Payment>> {
     let payments: Vec<Payment> = vec![
         Payment {
             pmt_id: 1,
@@ -80,9 +80,19 @@ async fn get_group_payments(Json(payload): Json<GetGroupPaymentsCommand>) -> Jso
     Json(payments)
 }
 
+pub async fn make_payment(Json(payload): Json<MakePaymentCommand>) -> Json<bool> {
+    let description: String = "".to_string();
+    // TODO create a payment
+    let payment: Payment = Payment::new(1, payload.user_id, payload.user_id, payload.amt, description);
+    println!("{:?}", payment);
+    // TODO decremement the current balance
+    Json(true)
+}
+
 pub fn payment_routes() -> Router {
     Router::new()
         .route("/get_payment", post(get_payment))
         .route("/get_user_payments", post(get_user_payments))
         .route("/get_group_payments", post(get_group_payments))
+        .route("/make_payment", post(make_payment))
 }
