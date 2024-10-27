@@ -27,8 +27,6 @@ pub async fn get_user(
         .await
         .expect("Cannot fetch this user");
 
-        // , COALESCE(ARRAY_AGG(DISTINCT gp.group_id), '{}') AS groups, COALESCE(ARRAY_AGG(DISTINCT p.pmt_id), '{}') AS payments
-
     println!("{}, {}, {}, {}", row.user_id, row.display_name, row.email, row.img.clone().unwrap_or_default());
 
     let profile: Profile = Profile {

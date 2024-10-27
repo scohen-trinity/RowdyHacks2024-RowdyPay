@@ -8,7 +8,6 @@ pub struct CreateUserCommand {
 
 #[derive(Deserialize)]
 pub struct AuthUserCommand {
-    pub display_name: String,
     pub email: String,
 }
 
