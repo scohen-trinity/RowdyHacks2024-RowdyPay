@@ -34,25 +34,26 @@ pub async fn update_balances(
     State(pool): State<PgPool>,
     Json(payload): Json<UpdateBalancesCommand>
 ) -> Json<bool> {
-    let amount: f32 = payload.amt / (payload.user_ids.len() as f32);
+    let amount: f32 = payload.amt / ((payload.user_ids.len() - 1) as f32);
     for user in payload.user_ids {
         if user != payload.submitter_id {
             // TODO update the balances with the user id and balance id
             sqlx::query_as!(
-                UpdateBalanceDB,
+                models::balance_db_models::UpdateBalanceDB,
                 "
                 INSERT INTO balances (user_id, group_id, amt)
-                VALUES ($1, $2, $3)
+                VALUES ($2, $3, $1)
                 ON CONFLICT (user_id, group_id)
-                DO UPDATE SET amt = balances.amt + EXCLUDED.amt
+                DO UPDATE SET amt = balances.amt + $1
                 ",
+                BigDecimal::from_f32(amount),
                 user,
                 payload.group_id,
-                BigDecimal::from_f32(amount)
             )
-            .fetch_one(&pool)
+            .execute(&pool)
             .await
             .expect("Could not upsert the balance");
+
             // TODO update the transaction with the ower id and the owed id
             sqlx::query_as!(
                 UpdateTransactionDB,
@@ -67,11 +68,9 @@ pub async fn update_balances(
                 payload.group_id,
                 BigDecimal::from_f32(amount)
             )
-            .fetch_one(&pool)
+            .execute(&pool)
             .await
             .expect("Could not upsert the transaction");
-
-            println!("Add {} to user_id {} and group_1 {}", amount, user, payload.group_id);
         }
     }
     
