@@ -11,7 +11,7 @@ pub async fn get_payment(Json(payload): Json<GetPaymentCommand>) -> Json<Payment
         group_id: 1,
         amt: 10.00,
         date_created: Date::new(22, 10, 2024),
-        description: "hookers and blow".to_string(),
+        description: "RowdyHacks".to_string(),
     };
 
     Json(payment)

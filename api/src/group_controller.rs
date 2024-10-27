@@ -1,6 +1,6 @@
 use axum::{extract::State, Json};
 use commands::group_commands::{CreateGroupCommand, GetGroupCommand, GetGroupsCommand};
-use dtos::group_dtos::{GroupDB, GroupUserDB, PartialGroupDB};
+use dtos::group_dtos::{GroupDB, GroupUserDB, PartialGroupDB, ParticipantsDB};
 use models::{group_model::Group, profile_model::Profile};
 use sqlx::PgPool;
 
@@ -31,59 +31,99 @@ pub async fn get_group(
 }
 
 // for returning groups associated with a user_id
-pub async fn get_groups(Json(payload): Json<GetGroupsCommand>) -> Json<Vec<Group>> {
+pub async fn get_groups(
+    State(pool): State<PgPool>,
+    Json(payload): Json<GetGroupsCommand>
+) -> Json<Vec<Group>> {
     // TODO make the fetch call with the payload.id
-    println!("Getting the groups from users id: {}", payload.user_id);
-    let groups: Vec<Group> = vec![
-        Group { 
-            group_id: 1,
-            group_name: "test group 1".to_string(),
-            users: vec![1, 2],
-            img: "https://media.istockphoto.com/id/1332758692/photo/swimming-trunks-on-a-white-background.jpg?s=612x612&w=0&k=20&c=D2_XK7R0mSAe43Moij5jnoD__QS_koqWdmWnVyiP9Js=".to_string(),
-        },
-        Group { 
-            group_id: 2,
-            group_name: "test group 2".to_string(),
-            users: vec![1, 2, 3],
-            img: "https://media.istockphoto.com/id/1332758692/photo/swimming-trunks-on-a-white-background.jpg?s=612x612&w=0&k=20&c=D2_XK7R0mSAe43Moij5jnoD__QS_koqWdmWnVyiP9Js=".to_string(),
-        },
-    ];
+    let groups_db: Vec<GroupDB> = sqlx::query_as!(
+        GroupDB,
+        "
+        SELECT g.group_id, 
+           g.group_name, 
+           COALESCE(ARRAY(
+               SELECT DISTINCT gp.user_id 
+               FROM group_participants gp 
+               WHERE gp.group_id = g.group_id
+           ), '{}') AS users, 
+           g.img
+        FROM groups g
+        JOIN group_participants gp ON g.group_id = gp.group_id
+        WHERE gp.user_id = $1
+        ",
+        payload.user_id
+    )
+    .fetch_all(&pool)
+    .await
+    .expect("Could not fetch groups");
+
+    let mut groups: Vec<Group> = Vec::new();
+
+    for group_db in groups_db {
+        let group: Group = Group {
+            group_id: group_db.group_id,
+            group_name: group_db.group_name,
+            users: group_db.users.unwrap_or_default(),
+            img: group_db.img.unwrap_or_default(),
+        };
+
+        groups.push(group);
+    }
+
+    println!("{:?}", groups);
 
     Json(groups)
 }
 
-pub async fn get_users_by_group(Json(payload): Json<GetGroupCommand>) -> Json<Vec<Profile>> {
-    // TODO make the database call to fetch the users from a specific group
-    println!("Fetching users by group_id: {}", payload.group_id.to_string());
-    let group_participants = vec![
-        Profile {
-            user_id: 1,
-            display_name: "Aiden".to_string(),
-            email: "aiden@gmail.com".to_string(),
-            img: "https://memories-matter.blog/wp-content/uploads/2018/08/sillymona.png".to_string(),
-            groups: vec![],
-            payments: vec![],
-            date_created: 1729970177,
-        },
-        Profile {
-            user_id: 2,
-            display_name: "Sam".to_string(),
-            email: "sam@gmail.com".to_string(),
-            img: "https://memories-matter.blog/wp-content/uploads/2018/08/sillymona.png".to_string(),
-            groups: vec![],
-            payments: vec![],
-            date_created: 1729970177,
-        },
-        Profile {
-            user_id: 3,
-            display_name: "Khoi".to_string(),
-            email: "khoi@gmail.com".to_string(),
-            img: "https://memories-matter.blog/wp-content/uploads/2018/08/sillymona.png".to_string(),
-            groups: vec![],
-            payments: vec![],
-            date_created: 1729970177,
-        },
-    ];
+pub async fn get_users_by_group(
+    State(pool): State<PgPool>,
+    Json(payload): Json<GetGroupCommand>
+) -> Json<Vec<Profile>> {
+    // make the database call to fetch the users from a specific group
+    let participants_db: Vec<ParticipantsDB> = sqlx::query_as!(
+        ParticipantsDB,
+        "
+        SELECT 
+            u.user_id,
+            u.display_name,
+            u.email,
+            u.img,
+            COALESCE(ARRAY(
+                SELECT DISTINCT gp.group_id 
+                FROM group_participants gp 
+                WHERE gp.user_id = u.user_id
+            ), '{}') AS groups,
+            COALESCE(ARRAY(
+                SELECT DISTINCT p.pmt_id 
+                FROM payments p 
+                WHERE p.user_id = u.user_id
+            ), '{}') AS payments,
+            u.date_created
+        FROM users u
+        JOIN group_participants gp ON u.user_id = gp.user_id
+        WHERE gp.group_id = $1
+        ",
+        payload.group_id
+    )
+    .fetch_all(&pool)
+    .await
+    .expect("Could not fetch participants from a group");
+
+    let mut group_participants: Vec<Profile> = Vec::new();
+
+    for participant_db in participants_db {
+        let participant: Profile = Profile {
+            user_id: participant_db.user_id,
+            display_name: participant_db.display_name,
+            email: participant_db.email,
+            img: participant_db.img.unwrap_or_default(),
+            groups: participant_db.groups.unwrap_or_default(),
+            payments: participant_db.payments.unwrap_or_default(),
+            date_created: participant_db.date_created,
+        };
+
+        group_participants.push(participant);
+    }
 
     Json(group_participants)
 }
