@@ -1,8 +1,8 @@
-use axum::{extract::State, Json};
-use commands::group_commands::{CreateGroupCommand, GetGroupCommand, GetGroupsCommand};
-use dtos::group_dtos::{GroupDB, GroupUserDB, PartialGroupDB, ParticipantsDB};
-use models::{group_model::Group, profile_model::Profile};
 use sqlx::PgPool;
+use axum::{extract::State, Json};
+
+use commands::group_commands::{CreateGroupCommand, GetGroupCommand, GetGroupsCommand};
+use models::{group_db_models::{GroupDB, GroupUserDB, PartialGroupDB, ParticipantsDB}, group_model::Group, profile_model::Profile};
 
 pub async fn get_group(
     State(pool): State<PgPool>,

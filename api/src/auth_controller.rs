@@ -1,9 +1,11 @@
-use axum::{extract::State, Json};
 use chrono::Utc;
-use commands::auth_commands::{AuthUserCommand, CreateUserCommand, UserDB};
-use models::profile_model::Profile;
 use sqlx::PgPool;
+use axum::{extract::State, Json};
 
+use models::{auth_db_models::UserDB, profile_model::Profile};
+use commands::auth_commands::{AuthUserCommand, CreateUserCommand};
+
+// endpoint to authenticate the user
 pub async fn auth_user(
     State(pool): State<PgPool>,
     Json(payload): Json<AuthUserCommand>
@@ -22,6 +24,7 @@ pub async fn auth_user(
     Json(profile)
 }
 
+// endpoint to create a new user
 pub async fn create_user(
     State(pool): State<PgPool>,
     Json(payload): Json<CreateUserCommand>

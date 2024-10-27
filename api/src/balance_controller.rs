@@ -1,10 +1,11 @@
-use axum::{extract::State, Json};
-use commands::balance_commands::{GetBalanceCommand, UpdateBalancesCommand};
-use dtos::balance_dtos::BalanceDB;
-use models::balance_model::Balance;
 use sqlx::PgPool;
+use axum::{extract::State, Json};
 use bigdecimal::{BigDecimal, FromPrimitive, ToPrimitive};
 
+use models::{balance_db_models::BalanceDB, balance_model::Balance};
+use commands::balance_commands::{GetBalanceCommand, UpdateBalancesCommand};
+
+// endpoint to get a single balance
 pub async fn get_balance(
     State(pool): State<PgPool>,
     Json(payload): Json<GetBalanceCommand>) -> Json<f32> {
@@ -34,12 +35,11 @@ pub async fn update_balances(
     Json(payload): Json<UpdateBalancesCommand>
 ) -> Json<bool> {
     let amount: f32 = payload.amt / (payload.user_ids.len() as f32);
-    println!("number of users: {}", payload.user_ids.len() as f32);
     for user in payload.user_ids {
         if user != payload.submitter_id {
             // TODO update the balances with the user id and balance id
             sqlx::query_as!(
-                UpdateBalanceDTO,
+                UpdateBalanceDB,
                 "
                 INSERT INTO balances (user_id, group_id, amt)
                 VALUES ($1, $2, $3)
@@ -55,7 +55,7 @@ pub async fn update_balances(
             .expect("Could not upsert the balance");
             // TODO update the transaction with the ower id and the owed id
             sqlx::query_as!(
-                UpdateTransactionDTO,
+                UpdateTransactionDB,
                 "
                 INSERT INTO transactions (ower_id, owed_id, group_id, amt)
                 VALUES ($1, $2, $3, $4)

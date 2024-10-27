@@ -1,13 +1,13 @@
-use axum::{extract::State, Json};
-use commands::profile_commands::{GetProfileCommand, GetProfileDB};
-use models::profile_model::Profile;
 use sqlx::PgPool;
+use axum::{extract::State, Json};
+
+use models::{profile_db_models::GetProfileDB, profile_model::Profile};
+use commands::profile_commands::{GetProfileCommand, LeaveGroupCommand};
 
 pub async fn get_user(
     State(pool): State<PgPool>,
     Json(payload): Json<GetProfileCommand>
 ) -> Json<Profile> {
-    println!("{}", payload.user_id);
     let row: GetProfileDB = sqlx::query_as!(
         GetProfileDB,
         "SELECT 
@@ -27,8 +27,6 @@ pub async fn get_user(
         .await
         .expect("Cannot fetch this user");
 
-    println!("{}, {}, {}, {}", row.user_id, row.display_name, row.email, row.img.clone().unwrap_or_default());
-
     let profile: Profile = Profile {
         user_id: row.user_id,
         display_name: row.display_name,
@@ -40,4 +38,25 @@ pub async fn get_user(
     };
 
     Json(profile)
+}
+
+pub async fn leave_group(
+    State(pool): State<PgPool>,
+    Json(payload): Json<LeaveGroupCommand>
+) -> Json<bool> {
+    println!("{}, {}", payload.user_id, payload.group_id);
+    // delete the user/group relation from the group_participants table
+    sqlx::query!(
+        "
+        DELETE FROM group_participants
+        WHERE user_id = $1 AND group_id = $2
+        ",
+        payload.user_id,
+        payload.group_id,
+    )
+    .execute(&pool)
+    .await
+    .expect("could not remove user from a group");
+    
+    Json(true)
 }

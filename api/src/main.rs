@@ -1,13 +1,14 @@
-use auth_controller::{auth_user, create_user};
-use axum::{routing::{get, post}, Router};
-use balance_controller::{get_balance, update_balances};
 use dotenvy::dotenv;
+use tokio::net::TcpListener;
+use sqlx::postgres::PgPoolOptions;
+use tower_http::cors::{Any, CorsLayer};
+use axum::{routing::{delete, get, post}, Router};
+
+use auth_controller::{auth_user, create_user};
+use profile_controller::{get_user, leave_group};
+use balance_controller::{get_balance, update_balances};
 use group_controller::{create_group, get_group, get_groups, get_users_by_group};
 use payment_controller::{get_group_payments, get_payment, get_user_payments, make_payment};
-use profile_controller::get_user;
-use sqlx::postgres::PgPoolOptions;
-use tokio::net::TcpListener;
-use tower_http::cors::{Any, CorsLayer};
 
 pub mod balance_controller;
 pub mod hello_world_controller;
@@ -62,6 +63,7 @@ async fn main() {
         .route("/api/create_user", post(create_user))
         .route("/api/auth_user", post(auth_user))
         .route("/api/create_group", post(create_group))
+        .route("/api/leave_group", delete(leave_group))
         .with_state(pool)
         .layer(cors);
 
