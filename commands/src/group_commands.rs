@@ -1,3 +1,4 @@
+use models::profile_model::Profile;
 use serde::Deserialize;
 
 #[derive(Deserialize)]
@@ -14,6 +15,6 @@ pub struct GetGroupsCommand {
 pub struct CreateGroupCommand {
     pub name: String,
     pub image: String,
-    pub user_ids: Vec<u64>,
+    pub user_ids: Vec<Profile>,
     pub creator_id: u64,
 }

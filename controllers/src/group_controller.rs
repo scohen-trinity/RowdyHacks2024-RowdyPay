@@ -6,7 +6,26 @@ async fn get_group(Json(payload): Json<GetGroupCommand>) -> Json<Group> {
     let group: Group = Group { 
         id: payload.group_id,
         name: "test group".to_string(),
-        users: vec![1, 2],
+        users: vec![
+            Profile {
+                id: 1,
+                display_name: "Aiden".to_string(),
+                email: "aiden@gmail.com".to_string(),
+                image: "https://memories-matter.blog/wp-content/uploads/2018/08/sillymona.png".to_string(),
+                groups: vec![],
+                payments: vec![],
+                date_created: 1729970177,
+            },
+            Profile {
+                id: 2,
+                display_name: "Sam".to_string(),
+                email: "sam@gmail.com".to_string(),
+                image: "https://memories-matter.blog/wp-content/uploads/2018/08/sillymona.png".to_string(),
+                groups: vec![],
+                payments: vec![],
+                date_created: 1729970177,
+            },
+        ],
         image: "https://media.istockphoto.com/id/1332758692/photo/swimming-trunks-on-a-white-background.jpg?s=612x612&w=0&k=20&c=D2_XK7R0mSAe43Moij5jnoD__QS_koqWdmWnVyiP9Js=".to_string(),
     };
 
@@ -20,13 +39,60 @@ async fn get_groups(Json(payload): Json<GetGroupsCommand>) -> Json<Vec<Group>> {
         Group { 
             id: 1,
             name: "test group 1".to_string(),
-            users: vec![1, 2],
+            users: vec![
+                Profile {
+                    id: 1,
+                    display_name: "Aiden".to_string(),
+                    email: "aiden@gmail.com".to_string(),
+                    image: "https://memories-matter.blog/wp-content/uploads/2018/08/sillymona.png".to_string(),
+                    groups: vec![],
+                    payments: vec![],
+                    date_created: 1729970177,
+                },
+                Profile {
+                    id: 2,
+                    display_name: "Sam".to_string(),
+                    email: "sam@gmail.com".to_string(),
+                    image: "https://memories-matter.blog/wp-content/uploads/2018/08/sillymona.png".to_string(),
+                    groups: vec![],
+                    payments: vec![],
+                    date_created: 1729970177,
+                },
+            ],
             image: "https://media.istockphoto.com/id/1332758692/photo/swimming-trunks-on-a-white-background.jpg?s=612x612&w=0&k=20&c=D2_XK7R0mSAe43Moij5jnoD__QS_koqWdmWnVyiP9Js=".to_string(),
         },
         Group { 
             id: 2,
             name: "test group 2".to_string(),
-            users: vec![1, 2, 3],
+            users: vec![
+                Profile {
+                    id: 1,
+                    display_name: "Aiden".to_string(),
+                    email: "aiden@gmail.com".to_string(),
+                    image: "https://memories-matter.blog/wp-content/uploads/2018/08/sillymona.png".to_string(),
+                    groups: vec![],
+                    payments: vec![],
+                    date_created: 1729970177,
+                },
+                Profile {
+                    id: 2,
+                    display_name: "Sam".to_string(),
+                    email: "sam@gmail.com".to_string(),
+                    image: "https://memories-matter.blog/wp-content/uploads/2018/08/sillymona.png".to_string(),
+                    groups: vec![],
+                    payments: vec![],
+                    date_created: 1729970177,
+                },
+                Profile {
+                    id: 3,
+                    display_name: "Khoi".to_string(),
+                    email: "khoi@gmail.com".to_string(),
+                    image: "https://memories-matter.blog/wp-content/uploads/2018/08/sillymona.png".to_string(),
+                    groups: vec![],
+                    payments: vec![],
+                    date_created: 1729970177,
+                }
+            ],
             image: "https://media.istockphoto.com/id/1332758692/photo/swimming-trunks-on-a-white-background.jpg?s=612x612&w=0&k=20&c=D2_XK7R0mSAe43Moij5jnoD__QS_koqWdmWnVyiP9Js=".to_string(),
         },
     ];
@@ -64,7 +130,7 @@ async fn get_users_by_group(Json(payload): Json<GetGroupCommand>) -> Json<Vec<Pr
             groups: vec![],
             payments: vec![],
             date_created: 1729970177,
-        }
+        },
     ];
 
     Json(group_participants)
