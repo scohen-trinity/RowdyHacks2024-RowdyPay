@@ -2,7 +2,7 @@ use sqlx::PgPool;
 use axum::{extract::State, Json};
 
 use commands::group_commands::{CreateGroupCommand, GetGroupCommand, GetGroupsCommand};
-use models::{group_db_models::{GroupDB, GroupUserDB, PartialGroupDB, ParticipantsDB}, group_model::Group, profile_model::Profile};
+use models::{group_db_models::{GroupDB, GroupUserDB, PartialGroupDB, ParticipantsDB}, group_model::Group, user_model::User};
 
 pub async fn get_group(
     State(pool): State<PgPool>,
@@ -78,7 +78,7 @@ pub async fn get_groups(
 pub async fn get_users_by_group(
     State(pool): State<PgPool>,
     Json(payload): Json<GetGroupCommand>
-) -> Json<Vec<Profile>> {
+) -> Json<Vec<User>> {
     // make the database call to fetch the users from a specific group
     let participants_db: Vec<ParticipantsDB> = sqlx::query_as!(
         ParticipantsDB,
@@ -109,13 +109,14 @@ pub async fn get_users_by_group(
     .await
     .expect("Could not fetch participants from a group");
 
-    let mut group_participants: Vec<Profile> = Vec::new();
+    let mut group_participants: Vec<User> = Vec::new();
 
     for participant_db in participants_db {
-        let participant: Profile = Profile {
+        let participant: User = User {
             user_id: participant_db.user_id,
             display_name: participant_db.display_name,
             email: participant_db.email,
+            password: "".to_string(),
             img: participant_db.img.unwrap_or_default(),
             groups: participant_db.groups.unwrap_or_default(),
             payments: participant_db.payments.unwrap_or_default(),

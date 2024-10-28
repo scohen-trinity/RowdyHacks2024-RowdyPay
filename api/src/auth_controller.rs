@@ -2,14 +2,14 @@ use chrono::Utc;
 use sqlx::PgPool;
 use axum::{extract::State, Json};
 
-use models::{auth_db_models::UserDB, profile_model::Profile};
+use models::{auth_db_models::UserDB, user_model::User};
 use commands::auth_commands::{AuthUserCommand, CreateUserCommand};
 
 // endpoint to authenticate the user
 pub async fn auth_user(
     State(pool): State<PgPool>,
     Json(payload): Json<AuthUserCommand>
-) -> Json<Profile> {
+) -> Json<User> {
     let user: UserDB = sqlx::query_as!(
         UserDB,
         "SELECT * FROM users WHERE email = $1",
@@ -19,16 +19,16 @@ pub async fn auth_user(
     .await
     .expect("Cannot log user in");
 
-    let profile: Profile = Profile::new(user.user_id, user.display_name, user.email, user.img.unwrap_or_default(), user.date_created);
+    let user: User = User::new(user.user_id, user.display_name, user.email, "".to_string(), user.img.unwrap_or_default(), user.date_created);
 
-    Json(profile)
+    Json(user)
 }
 
 // endpoint to create a new user
 pub async fn create_user(
     State(pool): State<PgPool>,
     Json(payload): Json<CreateUserCommand>
-) -> Json<Profile> {
+) -> Json<User> {
     // Add the user to the database
     let user: UserDB = sqlx::query_as!(
         UserDB,
@@ -46,7 +46,7 @@ pub async fn create_user(
     .await
     .expect("Could not add to database");
 
-    let profile: Profile = Profile::new(user.user_id, user.display_name, user.email, user.img.unwrap_or_default(), user.date_created);
+    let user: User = User::new(user.user_id, user.display_name, user.email, "".to_string(), user.img.unwrap_or_default(), user.date_created);
 
-    Json(profile)
+    Json(user)
 }

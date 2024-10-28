@@ -5,7 +5,7 @@ use tower_http::cors::{Any, CorsLayer};
 use axum::{routing::{delete, get, post}, Router};
 
 use auth_controller::{auth_user, create_user};
-use profile_controller::{get_user, leave_group};
+use user_controller::{get_user, leave_group};
 use balance_controller::{get_balance, update_balances};
 use group_controller::{create_group, get_group, get_groups, get_users_by_group};
 use payment_controller::{get_group_payments, get_payment, get_user_payments, make_payment};
@@ -13,7 +13,7 @@ use payment_controller::{get_group_payments, get_payment, get_user_payments, mak
 pub mod balance_controller;
 pub mod hello_world_controller;
 pub mod payment_controller;
-pub mod profile_controller;
+pub mod user_controller;
 pub mod group_controller;
 pub mod auth_controller;
 

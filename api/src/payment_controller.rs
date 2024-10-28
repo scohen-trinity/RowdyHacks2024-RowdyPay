@@ -43,7 +43,7 @@ pub async fn get_user_payments(
     State(pool): State<PgPool>,
     Json(payload): Json<GetUserPaymentsCommand>
 ) -> Json<Vec<Payment>> {
-    // implement fetch to the database to grab the profile with the id
+    // implement fetch to the database to grab the user with the id
     let payments_db: Vec<PaymentDB> = sqlx::query_as!(
         PaymentDB,
         "

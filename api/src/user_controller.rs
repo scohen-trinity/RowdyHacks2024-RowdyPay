@@ -1,15 +1,15 @@
 use sqlx::PgPool;
 use axum::{extract::State, Json};
 
-use models::{profile_db_models::GetProfileDB, profile_model::Profile};
-use commands::profile_commands::{GetProfileCommand, LeaveGroupCommand};
+use models::{user_db_models::GetUserDB, user_model::User};
+use commands::user_commands::{GetUserCommand, LeaveGroupCommand};
 
 pub async fn get_user(
     State(pool): State<PgPool>,
-    Json(payload): Json<GetProfileCommand>
-) -> Json<Profile> {
-    let row: GetProfileDB = sqlx::query_as!(
-        GetProfileDB,
+    Json(payload): Json<GetUserCommand>
+) -> Json<User> {
+    let row: GetUserDB = sqlx::query_as!(
+        GetUserDB,
         "SELECT 
             u.user_id, 
             u.display_name, 
@@ -27,17 +27,18 @@ pub async fn get_user(
         .await
         .expect("Cannot fetch this user");
 
-    let profile: Profile = Profile {
+    let user: User = User {
         user_id: row.user_id,
         display_name: row.display_name,
         email: row.email,
+        password: "".to_string(),
         img: row.img.unwrap_or_default(),
         groups: row.groups.unwrap_or_default(),
         payments: row.payments.unwrap_or_default(),
         date_created: 4273891,
     };
 
-    Json(profile)
+    Json(user)
 }
 
 pub async fn leave_group(

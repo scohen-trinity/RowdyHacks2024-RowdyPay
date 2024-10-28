@@ -1,4 +1,4 @@
-pub struct GetProfileDB {
+pub struct GetUserDB {
     pub user_id: i32,
     pub display_name: String,
     pub email: String,

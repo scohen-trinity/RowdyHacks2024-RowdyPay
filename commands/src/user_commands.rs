@@ -1,12 +1,12 @@
 use serde::Deserialize;
 
 #[derive(Deserialize)]
-pub struct GetProfileCommand {
+pub struct GetUserCommand {
     pub user_id: i32,
 }
 
 #[derive(Deserialize)]
-pub struct GetProfileDBTest {
+pub struct GetUserDBTest {
     pub user_id: i32,
     pub display_name: String,
     pub email: String,
