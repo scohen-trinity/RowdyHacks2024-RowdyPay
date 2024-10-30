@@ -1,4 +1,7 @@
 use serde::{Deserialize, Serialize};
+use bigdecimal::ToPrimitive;
+
+use crate::balance_db_models::BalanceDB;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Balance {
@@ -15,6 +18,17 @@ impl Balance {
             user_id,
             group_id,
             amt,
+        }
+    }
+}
+
+impl From<BalanceDB> for Balance {
+    fn from(value: BalanceDB) -> Self {
+        Balance {
+            balance_id: value.balance_id,
+            user_id: value.user_id,
+            group_id: value.group_id,
+            amt: value.amt.to_f32().unwrap(),
         }
     }
 }

@@ -35,7 +35,7 @@ pub async fn get_groups(
     State(pool): State<PgPool>,
     Json(payload): Json<GetGroupsCommand>
 ) -> Json<Vec<Group>> {
-    // TODO make the fetch call with the payload.id
+    // make the fetch call with the payload.id
     let groups_db: Vec<GroupDB> = sqlx::query_as!(
         GroupDB,
         "

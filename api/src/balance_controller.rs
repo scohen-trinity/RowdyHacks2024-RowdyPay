@@ -1,6 +1,6 @@
 use sqlx::PgPool;
 use axum::{extract::State, Json};
-use bigdecimal::{BigDecimal, FromPrimitive, ToPrimitive};
+use bigdecimal::{BigDecimal, FromPrimitive};
 
 use models::{balance_db_models::BalanceDB, balance_model::Balance};
 use commands::balance_commands::{GetBalanceCommand, UpdateBalancesCommand};
@@ -20,12 +20,14 @@ pub async fn get_balance(
         .await
         .expect("No balance here");
 
-    let balance: Balance = Balance {
-        balance_id: balance_db.balance_id,
-        user_id: balance_db.user_id,
-        group_id: balance_db.group_id,
-        amt: balance_db.amt.to_f32().unwrap(),
-    };
+    let balance: Balance = Balance::from(balance_db);
+
+    // let balance: Balance = Balance {
+    //     balance_id: balance_db.balance_id,
+    //     user_id: balance_db.user_id,
+    //     group_id: balance_db.group_id,
+    //     amt: balance_db.amt.to_f32().unwrap(),
+    // };
 
     Json(balance.amt)
 }

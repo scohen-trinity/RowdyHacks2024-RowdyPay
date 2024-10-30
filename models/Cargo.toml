@@ -7,3 +7,4 @@ edition = "2021"
 chrono = "0.4.38"
 serde = "1.0.210"
 sqlx = { version = "0.8", features = ["bigdecimal"] }
+bigdecimal = "0.4.5"
