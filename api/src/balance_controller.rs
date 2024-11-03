@@ -1,12 +1,12 @@
-use sqlx::PgPool;
-use axum::{extract::State, Json};
+use sqlx::{PgPool, Pool, Postgres};
+use axum::{extract::State, routing::post, Json, Router};
 use bigdecimal::{BigDecimal, FromPrimitive};
 
 use models::{balance_db_models::BalanceDB, balance_model::Balance};
 use commands::balance_commands::{GetBalanceCommand, UpdateBalancesCommand};
 
 // endpoint to get a single balance
-pub async fn get_balance(
+async fn get_balance(
     State(pool): State<PgPool>,
     Json(payload): Json<GetBalanceCommand>) -> Json<f32> {
     // make the backend call balances
@@ -32,7 +32,7 @@ pub async fn get_balance(
     Json(balance.amt)
 }
 
-pub async fn update_balances(
+async fn update_balances(
     State(pool): State<PgPool>,
     Json(payload): Json<UpdateBalancesCommand>
 ) -> Json<bool> {
@@ -77,4 +77,10 @@ pub async fn update_balances(
     }
     
     Json(true)
+}
+
+pub fn balance_routes() -> Router<Pool<Postgres>> {
+    Router::new()
+        .route("/get_balance", post(get_balance))
+        .route("/update_balances", post(update_balances))
 }

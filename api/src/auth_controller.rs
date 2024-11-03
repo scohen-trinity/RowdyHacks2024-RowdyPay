@@ -1,12 +1,12 @@
 use chrono::Utc;
-use sqlx::PgPool;
-use axum::{extract::State, Json};
+use sqlx::{PgPool, Pool, Postgres};
+use axum::{extract::State, routing::post, Json, Router};
 
 use models::{auth_db_models::UserDB, user_model::User};
 use commands::auth_commands::{AuthUserCommand, CreateUserCommand};
 
 // endpoint to authenticate the user
-pub async fn auth_user(
+async fn auth_user(
     State(pool): State<PgPool>,
     Json(payload): Json<AuthUserCommand>
 ) -> Json<User> {
@@ -25,7 +25,7 @@ pub async fn auth_user(
 }
 
 // endpoint to create a new user
-pub async fn create_user(
+async fn create_user(
     State(pool): State<PgPool>,
     Json(payload): Json<CreateUserCommand>
 ) -> Json<User> {
@@ -49,4 +49,10 @@ pub async fn create_user(
     let user: User = User::new(user.user_id, user.display_name, user.email, "".to_string(), user.img.unwrap_or_default(), user.date_created);
 
     Json(user)
+}
+
+pub fn auth_routes() -> Router<Pool<Postgres>> {
+    Router::new()
+        .route("/create_user", post(create_user))
+        .route("/auth_user", post(auth_user))
 }

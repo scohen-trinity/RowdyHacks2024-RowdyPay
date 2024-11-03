@@ -1,6 +1,6 @@
 use chrono::Utc;
-use sqlx::PgPool;
-use axum::{extract::State, Json};
+use sqlx::{PgPool, Pool, Postgres};
+use axum::{extract::State, routing::post, Json, Router};
 use bigdecimal::{BigDecimal, FromPrimitive, ToPrimitive};
 
 use models::{payment_db_models::PaymentDB, payment_model::Payment};
@@ -11,7 +11,7 @@ use commands::payment_commands::{
     MakePaymentCommand
 };
 
-pub async fn get_payment(
+async fn get_payment(
     State(pool): State<PgPool>,
     Json(payload): Json<GetPaymentCommand>
 ) -> Json<Payment> {
@@ -39,7 +39,7 @@ pub async fn get_payment(
     Json(payment)
 }
 
-pub async fn get_user_payments(
+async fn get_user_payments(
     State(pool): State<PgPool>,
     Json(payload): Json<GetUserPaymentsCommand>
 ) -> Json<Vec<Payment>> {
@@ -74,7 +74,7 @@ pub async fn get_user_payments(
     Json(payments)
 }
 
-pub async fn get_group_payments(
+async fn get_group_payments(
     State(pool): State<PgPool>,
     Json(payload): Json<GetGroupPaymentsCommand>
 ) -> Json<Vec<Payment>> {
@@ -109,7 +109,7 @@ pub async fn get_group_payments(
     Json(payments)
 }
 
-pub async fn make_payment(
+async fn make_payment(
     State(pool): State<PgPool>,
     Json(payload): Json<MakePaymentCommand>
 ) -> Json<bool> {
@@ -145,4 +145,12 @@ pub async fn make_payment(
     .expect("failed to reduce current balance to zero");
 
     Json(true)
+}
+
+pub fn payment_routes() -> Router<Pool<Postgres>> {
+    Router::new()
+        .route("/get_payment", post(get_payment))
+        .route("/get_user_payments", post(get_user_payments))
+        .route("/get_group_payments", post(get_group_payments))
+        .route("/make_payment", post(make_payment))
 }

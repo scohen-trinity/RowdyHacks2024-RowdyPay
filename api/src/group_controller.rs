@@ -1,10 +1,10 @@
-use sqlx::PgPool;
-use axum::{extract::State, Json};
+use sqlx::{PgPool, Pool, Postgres};
+use axum::{extract::State, routing::post, Json, Router};
 
 use commands::group_commands::{CreateGroupCommand, GetGroupCommand, GetGroupsCommand};
 use models::{group_db_models::{GroupDB, GroupUserDB, PartialGroupDB, ParticipantsDB}, group_model::Group, user_model::User};
 
-pub async fn get_group(
+async fn get_group(
     State(pool): State<PgPool>,
     Json(payload): Json<GetGroupCommand>
 ) -> Json<Group> {
@@ -31,7 +31,7 @@ pub async fn get_group(
 }
 
 // for returning groups associated with a user_id
-pub async fn get_groups(
+async fn get_groups(
     State(pool): State<PgPool>,
     Json(payload): Json<GetGroupsCommand>
 ) -> Json<Vec<Group>> {
@@ -75,7 +75,7 @@ pub async fn get_groups(
     Json(groups)
 }
 
-pub async fn get_users_by_group(
+async fn get_users_by_group(
     State(pool): State<PgPool>,
     Json(payload): Json<GetGroupCommand>
 ) -> Json<Vec<User>> {
@@ -129,7 +129,7 @@ pub async fn get_users_by_group(
     Json(group_participants)
 }
 
-pub async fn create_group(
+async fn create_group(
     State(pool): State<PgPool>,
     Json(payload): Json<CreateGroupCommand>
 ) -> Json<Group> {
@@ -176,4 +176,12 @@ pub async fn create_group(
     };
 
     Json(group)
+}
+
+pub fn group_routes() -> Router<Pool<Postgres>> {
+    Router::new()
+        .route("/get_group", post(get_group))
+        .route("/get_groups", post(get_groups))
+        .route("/get_users_by_group", post(get_users_by_group))
+        .route("/create_group", post(create_group))
 }

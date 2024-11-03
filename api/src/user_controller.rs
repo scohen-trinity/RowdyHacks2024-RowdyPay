@@ -1,10 +1,10 @@
-use sqlx::PgPool;
-use axum::{extract::State, Json};
+use sqlx::{PgPool, Pool, Postgres};
+use axum::{extract::State, routing::{delete, post}, Json, Router};
 
 use models::{user_db_models::GetUserDB, user_model::User};
 use commands::user_commands::{GetUserCommand, LeaveGroupCommand};
 
-pub async fn get_user(
+async fn get_user(
     State(pool): State<PgPool>,
     Json(payload): Json<GetUserCommand>
 ) -> Json<User> {
@@ -41,7 +41,7 @@ pub async fn get_user(
     Json(user)
 }
 
-pub async fn leave_group(
+async fn leave_group(
     State(pool): State<PgPool>,
     Json(payload): Json<LeaveGroupCommand>
 ) -> Json<bool> {
@@ -60,4 +60,10 @@ pub async fn leave_group(
     .expect("could not remove user from a group");
     
     Json(true)
+}
+
+pub fn user_routes() -> Router<Pool<Postgres>> {
+    Router::new()
+        .route("/get_user", post(get_user))
+        .route("/leave_group", delete(leave_group))
 }

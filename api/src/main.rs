@@ -1,14 +1,14 @@
 use dotenvy::dotenv;
+use group_controller::group_routes;
 use tokio::net::TcpListener;
 use sqlx::postgres::PgPoolOptions;
 use tower_http::cors::{Any, CorsLayer};
-use axum::{routing::{delete, get, post}, Router};
+use axum::{routing::get, Router};
 
-use auth_controller::{auth_user, create_user};
-use user_controller::{get_user, leave_group};
-use balance_controller::{get_balance, update_balances};
-use group_controller::{create_group, get_group, get_groups, get_users_by_group};
-use payment_controller::{get_group_payments, get_payment, get_user_payments, make_payment};
+use auth_controller::auth_routes;
+use user_controller::user_routes;
+use balance_controller::balance_routes;
+use payment_controller::payment_routes;
 
 pub mod balance_controller;
 pub mod hello_world_controller;
@@ -50,20 +50,11 @@ async fn main() {
     // application routes
     let app: Router = Router::new()
         .route("/", get(root))
-        .route("/api/get_user", post(get_user))
-        .route("/api/get_balance", post(get_balance))
-        .route("/api/update_balances", post(update_balances))
-        .route("/api/get_group", post(get_group))
-        .route("/api/get_groups", post(get_groups))
-        .route("/api/get_users_by_group", post(get_users_by_group))
-        .route("/api/get_payment", post(get_payment))
-        .route("/api/get_user_payments", post(get_user_payments))
-        .route("/api/get_group_payments", post(get_group_payments))
-        .route("/api/make_payment", post(make_payment))
-        .route("/api/create_user", post(create_user))
-        .route("/api/auth_user", post(auth_user))
-        .route("/api/create_group", post(create_group))
-        .route("/api/leave_group", delete(leave_group))
+        .nest("/api", auth_routes())
+        .nest("/api", balance_routes())
+        .nest("/api", group_routes())
+        .nest("/api", payment_routes())
+        .nest("/api", user_routes())
         .with_state(pool)
         .layer(cors);
 
