@@ -1,21 +1,14 @@
 use dotenvy::dotenv;
-use group_controller::group_routes;
 use tokio::net::TcpListener;
 use sqlx::postgres::PgPoolOptions;
 use tower_http::cors::{Any, CorsLayer};
 use axum::{routing::get, Router};
 
-use auth_controller::auth_routes;
-use user_controller::user_routes;
-use balance_controller::balance_routes;
-use payment_controller::payment_routes;
-
-pub mod balance_controller;
-pub mod hello_world_controller;
-pub mod payment_controller;
-pub mod user_controller;
-pub mod group_controller;
-pub mod auth_controller;
+use controllers::auth_controller::auth_routes;
+use controllers::balance_controller::balance_routes;
+use controllers::group_controller::group_routes;
+use controllers::payment_controller::payment_routes;
+use controllers::user_controller::user_routes;
 
 #[tokio::main]
 async fn main() {

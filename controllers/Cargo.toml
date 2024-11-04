@@ -9,6 +9,8 @@ lazy_static = "1.5.0"
 tokio = { version = "1.40.0", features = ["full"] }
 tower-http = { version = "0.6.1", features = ["cors"] }
 sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres", "macros"] }
+chrono = "0.4.38"
+bigdecimal = "0.4.5"
 
 # Dependencies on other workspace crates
 commands = { path = "../commands" }

@@ -55,7 +55,6 @@ name = "api"
 version = "0.1.0"
 dependencies = [
  "axum",
- "bigdecimal",
  "chrono",
  "commands",
  "controllers",
@@ -285,6 +284,8 @@ name = "controllers"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "bigdecimal",
+ "chrono",
  "commands",
  "dtos",
  "lazy_static",
