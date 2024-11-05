@@ -133,7 +133,6 @@ async fn create_group(
     State(pool): State<PgPool>,
     Json(payload): Json<CreateGroupCommand>
 ) -> Json<Group> {
-    // TODO make the backend call to the database to add the group as well as the associated balance
     let img = payload.img.unwrap_or_default();
     let returned_partial_group: PartialGroupDB = sqlx::query_as!(
         PartialGroupDB,
@@ -167,6 +166,8 @@ async fn create_group(
 
         inserted_users.push(inserted_user.user_id);
     }
+
+    // TODO create balances for each user and budget once the budget is created
 
     let group: Group = Group {
         group_id: returned_partial_group.group_id,

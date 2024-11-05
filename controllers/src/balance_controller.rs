@@ -36,10 +36,10 @@ async fn update_balances(
     State(pool): State<PgPool>,
     Json(payload): Json<UpdateBalancesCommand>
 ) -> Json<bool> {
-    let amount: f32 = payload.amt / ((payload.user_ids.len() - 1) as f32);
+    // assuming that the user ids list includes all users including the one requesting payment
+    let amount: f32 = payload.amt / ((payload.user_ids.len()) as f32);
     for user in payload.user_ids {
         if user != payload.submitter_id {
-            // TODO update the balances with the user id and balance id
             sqlx::query_as!(
                 models::balance_db_models::UpdateBalanceDB,
                 "
@@ -56,7 +56,6 @@ async fn update_balances(
             .await
             .expect("Could not upsert the balance");
 
-            // TODO update the transaction with the ower id and the owed id
             sqlx::query_as!(
                 UpdateTransactionDB,
                 "
