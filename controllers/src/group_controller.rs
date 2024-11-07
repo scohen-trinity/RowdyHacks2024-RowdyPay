@@ -1,3 +1,5 @@
+use bigdecimal::{BigDecimal, FromPrimitive};
+use itertools::Itertools;
 use sqlx::{PgPool, Pool, Postgres};
 use axum::{extract::State, routing::post, Json, Router};
 
@@ -129,6 +131,7 @@ async fn get_users_by_group(
     Json(group_participants)
 }
 
+// TODO test this shit ya goof
 async fn create_group(
     State(pool): State<PgPool>,
     Json(payload): Json<CreateGroupCommand>
@@ -148,8 +151,7 @@ async fn create_group(
 
     let mut inserted_users: Vec<i32> = Vec::new();
 
-    for user in payload.user_ids {
-        println!("{}", user);
+    for user in &payload.user_ids {
         let inserted_user: GroupUserDB = sqlx::query_as!(
             GroupUserDB,
             "
@@ -165,9 +167,40 @@ async fn create_group(
         .expect("Error inserting a user into group_participants");
 
         inserted_users.push(inserted_user.user_id);
+
+        // create balances for each user in the new group
+        sqlx::query!(
+            "
+            INSERT INTO balances (user_id, group_id, amt)
+            VALUES ($1, $2, $3)
+            ",
+            user,
+            returned_partial_group.group_id,
+            BigDecimal::from_f32(0.0),
+        )
+        .execute(&pool)
+        .await
+        .expect("failed to create a new budget for a user in a new budget");
     }
 
-    // TODO create balances for each user and budget once the budget is created
+    let transactions = payload.user_ids.iter().combinations(2);
+
+    for transaction in transactions {
+        // TODO need to enumerate each combo of user id and then run this again
+        sqlx::query!(
+            "
+            INSERT INTO transactions (ower_id, owed_id, group_id, amt)
+            VALUES ($1, $2, $3, $4)
+            ",
+            transaction[0],
+            transaction[1],
+            returned_partial_group.group_id,
+            BigDecimal::from_f32(0.0),
+        )
+        .execute(&pool)
+        .await
+        .expect("failed to create a new budget for a user in a new budget");
+    }
 
     let group: Group = Group {
         group_id: returned_partial_group.group_id,

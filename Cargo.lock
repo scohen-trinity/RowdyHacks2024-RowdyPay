@@ -55,18 +55,11 @@ name = "api"
 version = "0.1.0"
 dependencies = [
  "axum",
- "chrono",
- "commands",
  "controllers",
  "dotenvy",
- "dtos",
- "models",
- "serde",
- "serde_json",
  "sqlx",
  "tokio",
  "tower-http",
- "utils",
 ]
 
 [[package]]
@@ -288,7 +281,7 @@ dependencies = [
  "chrono",
  "commands",
  "dtos",
- "lazy_static",
+ "itertools",
  "models",
  "sqlx",
  "tokio",
@@ -758,6 +751,15 @@ checksum = "707907fe3c25f5424cce2cb7e1cbcafee6bdbe735ca90ef77c29e84591e5b9da"
 dependencies = [
  "equivalent",
  "hashbrown 0.15.0",
+]
+
+[[package]]
+name = "itertools"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "413ee7dfc52ee1a4949ceeb7dbc8a33f2d6c088194d9f922fb8318faf1f01186"
+dependencies = [
+ "either",
 ]
 
 [[package]]
