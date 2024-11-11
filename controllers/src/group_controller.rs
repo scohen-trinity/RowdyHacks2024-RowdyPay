@@ -1,9 +1,9 @@
 use bigdecimal::{BigDecimal, FromPrimitive};
 use itertools::Itertools;
 use sqlx::{PgPool, Pool, Postgres};
-use axum::{extract::State, routing::post, Json, Router};
+use axum::{extract::{Path, State}, routing::{get, post}, Json, Router};
 
-use commands::group_commands::{CreateGroupCommand, GetGroupCommand, GetGroupsCommand};
+use commands::group_commands::{CreateGroupCommand, GetGroupCommand};
 use models::{group_db_models::{GroupDB, GroupUserDB, PartialGroupDB, ParticipantsDB}, group_model::Group, user_model::User};
 
 async fn get_group(
@@ -35,8 +35,9 @@ async fn get_group(
 // for returning groups associated with a user_id
 async fn get_groups(
     State(pool): State<PgPool>,
-    Json(payload): Json<GetGroupsCommand>
+    Path(user_id): Path<i32>
 ) -> Json<Vec<Group>> {
+    println!("top of get groups");
     // make the fetch call with the payload.id
     let groups_db: Vec<GroupDB> = sqlx::query_as!(
         GroupDB,
@@ -53,7 +54,7 @@ async fn get_groups(
         JOIN group_participants gp ON g.group_id = gp.group_id
         WHERE gp.user_id = $1
         ",
-        payload.user_id
+        user_id
     )
     .fetch_all(&pool)
     .await
@@ -215,7 +216,7 @@ async fn create_group(
 pub fn group_routes() -> Router<Pool<Postgres>> {
     Router::new()
         .route("/get_group", post(get_group))
-        .route("/get_groups", post(get_groups))
+        .route("/get_groups/:user_id", get(get_groups))
         .route("/get_users_by_group", post(get_users_by_group))
         .route("/create_group", post(create_group))
 }
